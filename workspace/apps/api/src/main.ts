@@ -28,6 +28,19 @@ async function bootstrap() {
   await connectDB();
 
   const app = await NestFactory.create(AppModule);
+
+  // ✅ Allow requests from your React dev server
+  app.enableCors({
+    origin: [
+      'http://localhost:5173', // Vite default
+      'http://127.0.0.1:5173',
+      'http://localhost:4200', // Nx default
+      'http://127.0.0.1:4200',
+    ],
+    methods: ['GET', 'POST', 'OPTIONS'],
+    allowedHeaders: ['Content-Type'],
+  });
+
   const globalPrefix = 'api';
   app.setGlobalPrefix(globalPrefix);
   const port = process.env.PORT || 3000;
