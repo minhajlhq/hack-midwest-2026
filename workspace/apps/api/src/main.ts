@@ -3,31 +3,22 @@
  * This is only a minimal backend to get started.
  */
 
-import { Logger } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app/app.module';
-import { MongoClient } from 'mongodb';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
 
-async function connectDB() {
-  try {
-    const client = new MongoClient(process.env.MONGODB_URI!);
-    await client.connect();
-    console.log('Connected to MongoDB Atlas');
-    return client;
-  } catch (err) {
-    console.error('MongoDB connection failed:', err);
-    process.exit(1); // Exit if database connection fails
-  }
-}
-
 async function bootstrap() {
-  // Connect to MongoDB before starting Nest
-  await connectDB();
-
   const app = await NestFactory.create(AppModule);
+
+  // Enable validation globally
+  app.useGlobalPipes(new ValidationPipe({
+    whitelist: true,
+    forbidNonWhitelisted: true,
+    transform: true,
+  }));
 
   // ✅ Allow requests from your React dev server
   app.enableCors({
@@ -48,3 +39,6 @@ async function bootstrap() {
   await app.listen(port);
   Logger.log(`🚀 Application is running on: http://localhost:${port}/${globalPrefix}`);
 }
+
+bootstrap();
+
