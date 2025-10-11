@@ -1,5 +1,6 @@
 import { Route, Routes, Link } from 'react-router-dom';
 import SbcAgentSim from './SbcAgentSim';
+import CreateUser from './CreateUser';
 
 export function App() {
   return (
@@ -28,6 +29,7 @@ export function App() {
           <Link to="/" style={{ color: 'white', textDecoration: 'none', padding: '0.5rem 1rem' }}>Home</Link>
           <Link to="/page-2" style={{ color: 'white', textDecoration: 'none', padding: '0.5rem 1rem' }}>About</Link>
           <Link to="/sbc-agent-sim" style={{ color: 'white', textDecoration: 'none', padding: '0.5rem 1rem' }}>Simulator</Link>
+          <Link to="/create-user" style={{ color: 'white', textDecoration: 'none', padding: '0.5rem 1rem' }}>Create User</Link>
         </div>
       </nav>
 
@@ -178,6 +180,7 @@ export function App() {
           }
         />
         <Route path="/sbc-agent-sim" element={<SbcAgentSim />} />
+        <Route path="/create-user" element={<CreateUser />} />
         </Routes>
       </div>
 
