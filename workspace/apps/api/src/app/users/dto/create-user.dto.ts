@@ -14,9 +14,8 @@ export class CreateUserDto {
   @IsString()
   lastName: string;
 
-  @IsOptional()
   @IsString()
-  walletAddress?: string;
+  walletAddress: string;
 
   @IsOptional()
   @IsNumber({ maxDecimalPlaces: 2 })

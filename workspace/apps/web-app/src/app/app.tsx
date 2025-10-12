@@ -1,8 +1,109 @@
-import { Route, Routes, Link } from 'react-router-dom';
+import { Route, Routes, Link, useLocation } from 'react-router-dom';
 import SbcAgentSim from './SbcAgentSim';
-import CreateUser from './CreateUser';
+import SignUp from './SignUp';
+import SignIn from './SignIn';
+import { AuthProvider, useAuth } from './AuthContext';
 
-export function App() {
+function Navigation() {
+  const location = useLocation();
+  const { user, isAuthenticated, logout } = useAuth();
+
+  const getNavLinkStyle = (path: string) => {
+    const isActive = location.pathname === path;
+    return {
+      color: 'white',
+      textDecoration: 'none',
+      padding: '0.5rem 1rem',
+      position: 'relative' as const,
+      transition: 'all 0.3s ease',
+      borderBottom: isActive ? '3px solid rgba(255, 255, 255, 0.8)' : '3px solid transparent',
+      fontWeight: isActive ? '600' : '400',
+      opacity: isActive ? 1 : 0.9
+    };
+  };
+
+  const handleLogout = () => {
+    logout();
+  };
+
+  return (
+    <nav style={{
+      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+      padding: '1rem 2rem',
+      boxShadow: '0 2px 10px rgba(0,0,0,0.1)'
+    }}>
+      <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', gap: '2rem', alignItems: 'center' }}>
+        <Link to="/" style={{ 
+          color: 'white', 
+          textDecoration: 'none', 
+          fontSize: '1.5rem', 
+          fontWeight: 'bold',
+          marginRight: 'auto'
+        }}>
+          ♻️ Trash2Cash
+        </Link>
+        <Link to="/" style={getNavLinkStyle('/')}>Home</Link>
+        <Link to="/page-2" style={getNavLinkStyle('/page-2')}>About</Link>
+        <Link to="/sbc-agent-sim" style={getNavLinkStyle('/sbc-agent-sim')}>Simulator</Link>
+        
+        {isAuthenticated ? (
+          <>
+            <div style={{ 
+              color: 'white', 
+              padding: '0.5rem 1rem',
+              background: 'rgba(255, 255, 255, 0.1)',
+              borderRadius: '20px',
+              fontSize: '0.9rem',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem'
+            }}>
+              <span>👋 {user?.firstName}</span>
+              <span style={{ 
+                background: 'rgba(255, 255, 255, 0.2)', 
+                padding: '0.25rem 0.5rem', 
+                borderRadius: '12px',
+                fontSize: '0.8rem',
+                fontWeight: '600'
+              }}>
+                💰 {user?.currentBalance || 0} SBC
+              </span>
+            </div>
+            <button
+              onClick={handleLogout}
+              style={{
+                background: 'rgba(255, 255, 255, 0.2)',
+                color: 'white',
+                border: '1px solid rgba(255, 255, 255, 0.3)',
+                padding: '0.5rem 1rem',
+                borderRadius: '20px',
+                cursor: 'pointer',
+                fontSize: '0.9rem',
+                transition: 'all 0.2s'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
+              }}
+            >
+              Sign Out
+            </button>
+          </>
+        ) : (
+          <>
+            <Link to="/sign-up" style={getNavLinkStyle('/sign-up')}>Sign Up</Link>
+            <Link to="/sign-in" style={getNavLinkStyle('/sign-in')}>Sign In</Link>
+          </>
+        )}
+      </div>
+    </nav>
+  );
+}
+
+function AppContent() {
+
   return (
     <div style={{ 
       minHeight: '100vh', 
@@ -10,28 +111,7 @@ export function App() {
       display: 'flex',
       flexDirection: 'column'
     }}>
-      {/* Navigation */}
-      <nav style={{
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-        padding: '1rem 2rem',
-        boxShadow: '0 2px 10px rgba(0,0,0,0.1)'
-      }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', gap: '2rem', alignItems: 'center' }}>
-          <Link to="/" style={{ 
-            color: 'white', 
-            textDecoration: 'none', 
-            fontSize: '1.5rem', 
-            fontWeight: 'bold',
-            marginRight: 'auto'
-          }}>
-            ♻️ Trash2Cash
-          </Link>
-          <Link to="/" style={{ color: 'white', textDecoration: 'none', padding: '0.5rem 1rem' }}>Home</Link>
-          <Link to="/page-2" style={{ color: 'white', textDecoration: 'none', padding: '0.5rem 1rem' }}>About</Link>
-          <Link to="/sbc-agent-sim" style={{ color: 'white', textDecoration: 'none', padding: '0.5rem 1rem' }}>Simulator</Link>
-          <Link to="/create-user" style={{ color: 'white', textDecoration: 'none', padding: '0.5rem 1rem' }}>Create User</Link>
-        </div>
-      </nav>
+      <Navigation />
 
       <div style={{ flex: 1 }}>
         <Routes>
@@ -180,7 +260,8 @@ export function App() {
           }
         />
         <Route path="/sbc-agent-sim" element={<SbcAgentSim />} />
-        <Route path="/create-user" element={<CreateUser />} />
+        <Route path="/sign-up" element={<SignUp />} />
+        <Route path="/sign-in" element={<SignIn />} />
         </Routes>
       </div>
 
@@ -292,6 +373,14 @@ export function App() {
         </div>
       </footer>
     </div>
+  );
+}
+
+export function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 }
 

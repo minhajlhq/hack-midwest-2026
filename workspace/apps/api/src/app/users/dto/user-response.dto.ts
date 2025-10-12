@@ -3,7 +3,7 @@ export class UserResponseDto {
   email: string;
   firstName: string;
   lastName: string;
-  walletAddress?: string;
+  walletAddress: string;
   currentBalance?: number;
   isActive: boolean;
   profilePicture?: string;
