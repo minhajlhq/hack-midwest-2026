@@ -19,8 +19,8 @@ export class User {
   @Prop({ required: true })
   lastName: string;
 
-  @Prop()
-  walletAddress?: string;
+  @Prop({ required: true })
+  walletAddress: string;
 
   @Prop({ type: Types.Decimal128, default: 0 })
   currentBalance?: Types.Decimal128;
