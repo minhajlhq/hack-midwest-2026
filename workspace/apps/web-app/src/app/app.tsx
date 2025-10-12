@@ -1,5 +1,7 @@
 import { Route, Routes, Link, useLocation } from 'react-router-dom';
 import SbcAgentSim from './SbcAgentSim';
+import RecyclingScanner from './RecyclingScanner';
+import WebcamTest from './WebcamTest';
 import SignUp from './SignUp';
 import SignIn from './SignIn';
 import RecycleTransactions from './RecycleTransactions';
@@ -46,6 +48,7 @@ function Navigation() {
         </Link>
         <Link to="/" style={getNavLinkStyle('/')}>Home</Link>
         <Link to="/page-2" style={getNavLinkStyle('/page-2')}>About</Link>
+        <Link to="/scanner" style={getNavLinkStyle('/scanner')}>Scanner</Link>
         <Link to="/sbc-agent-sim" style={getNavLinkStyle('/sbc-agent-sim')}>Simulator</Link>
         
         {isAuthenticated ? (
@@ -196,7 +199,7 @@ function AppContent() {
                   </p>
                   <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
                     <Link 
-                      to="/sbc-agent-sim" 
+                      to="/scanner" 
                       style={{
                         background: 'white',
                         color: '#667eea',
@@ -209,7 +212,7 @@ function AppContent() {
                         transition: 'transform 0.2s'
                       }}
                     >
-                      Try Simulator
+                      Start Scanning
                     </Link>
                     <Link 
                       to="/page-2" 
@@ -307,6 +310,8 @@ function AppContent() {
             </div>
           }
         />
+        <Route path="/scanner" element={<RecyclingScanner />} />
+        <Route path="/webcam-test" element={<WebcamTest />} />
         <Route path="/sbc-agent-sim" element={<SbcAgentSim />} />
         <Route path="/sign-up" element={<SignUp />} />
         <Route path="/sign-in" element={<SignIn />} />
@@ -352,6 +357,11 @@ function AppContent() {
                 <li style={{ marginBottom: '0.5rem' }}>
                   <Link to="/page-2" style={{ color: 'white', textDecoration: 'none', opacity: 0.9 }}>
                     About Us
+                  </Link>
+                </li>
+                <li style={{ marginBottom: '0.5rem' }}>
+                  <Link to="/scanner" style={{ color: 'white', textDecoration: 'none', opacity: 0.9 }}>
+                    Try Scanner
                   </Link>
                 </li>
                 <li style={{ marginBottom: '0.5rem' }}>

@@ -6,11 +6,33 @@
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app/app.module';
+import { MongoClient } from 'mongodb';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
 
+async function connectDB() {
+  try {
+    if (process.env.MONGODB_URI) {
+      const client = new MongoClient(process.env.MONGODB_URI);
+      await client.connect();
+      console.log('Connected to MongoDB Atlas');
+      return client;
+    } else {
+      console.log('⚠️  MongoDB URI not configured - running without database');
+      return null;
+    }
+  } catch (err) {
+    console.error('MongoDB connection failed:', err);
+    console.log('⚠️  Continuing without database...');
+    return null; // Continue without database instead of exiting
+  }
+}
+
 async function bootstrap() {
+  // Try to connect to MongoDB (optional for detection service)
+  await connectDB();
+
   const app = await NestFactory.create(AppModule);
 
   // Enable validation globally
@@ -41,4 +63,3 @@ async function bootstrap() {
 }
 
 bootstrap();
-
