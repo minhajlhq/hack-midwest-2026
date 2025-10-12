@@ -1,0 +1,87 @@
+<!doctype html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Recycling Camera</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 0; background: #111; color: #fff; }
+    #hud { position: fixed; left:0; right:0; bottom:0; background: rgba(0,0,0,.6); padding: 8px 12px; }
+    .row { display:flex; gap:12px; align-items:center; flex-wrap: wrap; }
+    button, select, input { padding: 8px 12px; border:0; border-radius:10px;}
+    #out { font-size: 14px; word-break: break-word; }
+    video { width: 100vw; height: auto; background:#000; }
+    label { opacity: .9; }
+  </style>
+</head>
+<body>
+  <video id="v" autoplay playsinline muted></video>
+  <div id="hud">
+    <div class="row">
+      <button id="start">Start</button>
+      <label>Interval (ms) <input id="interval" type="number" value="500" style="width:90px"></label>
+      <label>Backend
+        <select id="backend">
+          <option value="/frame-local">Local YOLO (no Bedrock)</option>
+          <option value="/frame-agent">Agent (Bedrock)</option>
+        </select>
+      </label>
+      <span id="status">idle</span>
+    </div>
+    <div id="out"></div>
+  </div>
+<script>
+const v = document.getElementById('v');
+const out = document.getElementById('out');
+const statusEl = document.getElementById('status');
+const startBtn = document.getElementById('start');
+const intervalInput = document.getElementById('interval');
+const backendSel = document.getElementById('backend');
+
+let timer = null, canvas, ctx;
+
+async function initCam() {
+  const stream = await navigator.mediaDevices.getUserMedia({
+    video: { facingMode: "environment" }, audio: false
+  });
+  v.srcObject = stream;
+  await v.play();
+  canvas = document.createElement('canvas');
+  ctx = canvas.getContext('2d');
+}
+
+function snapDataUrl() {
+  const w = v.videoWidth, h = v.videoHeight;
+  if (!w || !h) return null;
+  canvas.width = w; canvas.height = h;
+  ctx.drawImage(v, 0, 0, w, h);
+  return canvas.toDataURL('image/jpeg', 0.7);
+}
+
+async function sendFrame() {
+  const dataUrl = snapDataUrl();
+  if (!dataUrl) return;
+  statusEl.textContent = 'processing...';
+  try {
+    const r = await fetch(backendSel.value, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({dataUrl, userId: 'iphone'})
+    });
+    const j = await r.json();
+    out.textContent = JSON.stringify(j);
+    statusEl.textContent = r.ok ? 'ok' : 'error';
+  } catch (e) {
+    statusEl.textContent = 'network error';
+  }
+}
+
+startBtn.onclick = async () => {
+  if (!v.srcObject) await initCam();
+  if (timer) { clearInterval(timer); timer = null; startBtn.textContent = 'Start'; return; }
+  startBtn.textContent = 'Stop';
+  const ms = Math.max(200, Number(intervalInput.value) || 500);
+  timer = setInterval(sendFrame, ms);
+};
+</script>
+</body>
+</html>
