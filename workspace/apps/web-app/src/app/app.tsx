@@ -2,6 +2,8 @@ import { Route, Routes, Link, useLocation } from 'react-router-dom';
 import SbcAgentSim from './SbcAgentSim';
 import SignUp from './SignUp';
 import SignIn from './SignIn';
+import RecycleTransactions from './RecycleTransactions';
+import Popover from './Popover';
 import { AuthProvider, useAuth } from './AuthContext';
 
 function Navigation() {
@@ -47,50 +49,96 @@ function Navigation() {
         <Link to="/sbc-agent-sim" style={getNavLinkStyle('/sbc-agent-sim')}>Simulator</Link>
         
         {isAuthenticated ? (
-          <>
-            <div style={{ 
-              color: 'white', 
-              padding: '0.5rem 1rem',
-              background: 'rgba(255, 255, 255, 0.1)',
-              borderRadius: '20px',
-              fontSize: '0.9rem',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem'
-            }}>
-              <span>👋 {user?.firstName}</span>
-              <span style={{ 
-                background: 'rgba(255, 255, 255, 0.2)', 
-                padding: '0.25rem 0.5rem', 
-                borderRadius: '12px',
-                fontSize: '0.8rem',
-                fontWeight: '600'
-              }}>
-                💰 {user?.currentBalance || 0} SBC
-              </span>
-            </div>
-            <button
-              onClick={handleLogout}
-              style={{
-                background: 'rgba(255, 255, 255, 0.2)',
-                color: 'white',
-                border: '1px solid rgba(255, 255, 255, 0.3)',
+          <Popover
+            trigger={
+              <div style={{ 
+                color: 'white', 
                 padding: '0.5rem 1rem',
+                background: 'rgba(255, 255, 255, 0.1)',
                 borderRadius: '20px',
-                cursor: 'pointer',
                 fontSize: '0.9rem',
-                transition: 'all 0.2s'
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                cursor: 'pointer',
+                transition: 'all 0.2s',
+                border: '1px solid rgba(255, 255, 255, 0.2)'
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)';
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
+                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.3)';
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
+                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)';
               }}
-            >
-              Sign Out
-            </button>
-          </>
+              >
+                <span>👋 {user?.firstName}</span>
+                <span style={{ 
+                  background: 'rgba(255, 255, 255, 0.2)', 
+                  padding: '0.25rem 0.5rem', 
+                  borderRadius: '12px',
+                  fontSize: '0.8rem',
+                  fontWeight: '600'
+                }}>
+                  💰 {user?.currentBalance || 0} SBC
+                </span>
+                <span style={{ 
+                  fontSize: '0.7rem',
+                  opacity: 0.8,
+                  marginLeft: '0.25rem'
+                }}>
+                  ▼
+                </span>
+              </div>
+            }
+            placement="bottom-right"
+          >
+            <div style={{ padding: '0.5rem 0' }}>
+              <Link 
+                to="/transactions" 
+                style={{
+                  display: 'block',
+                  padding: '0.75rem 1rem',
+                  color: '#333',
+                  textDecoration: 'none',
+                  fontSize: '0.9rem',
+                  transition: 'background-color 0.2s',
+                  borderBottom: '1px solid #f3f4f6'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = '#f9fafb';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                }}
+              >
+                📋 View Transactions
+              </Link>
+              <button
+                onClick={handleLogout}
+                style={{
+                  width: '100%',
+                  padding: '0.75rem 1rem',
+                  background: 'transparent',
+                  color: '#ef4444',
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontSize: '0.9rem',
+                  textAlign: 'left',
+                  transition: 'background-color 0.2s'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = '#fef2f2';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                }}
+              >
+                🚪 Sign Out
+              </button>
+            </div>
+          </Popover>
         ) : (
           <>
             <Link to="/sign-up" style={getNavLinkStyle('/sign-up')}>Sign Up</Link>
@@ -262,6 +310,7 @@ function AppContent() {
         <Route path="/sbc-agent-sim" element={<SbcAgentSim />} />
         <Route path="/sign-up" element={<SignUp />} />
         <Route path="/sign-in" element={<SignIn />} />
+        <Route path="/transactions" element={<RecycleTransactions />} />
         </Routes>
       </div>
 

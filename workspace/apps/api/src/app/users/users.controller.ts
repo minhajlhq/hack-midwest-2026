@@ -5,6 +5,8 @@ import { UserResponseDto } from './dto/user-response.dto';
 import { LoginDto } from './dto/login.dto';
 import { LoginResponseDto } from './dto/login-response.dto';
 import { UpdateBalanceDto } from './dto/update-balance.dto';
+import { CreateRecycleTransactionDto } from './dto/create-recycle-transaction.dto';
+import { RecycleTransactionResponseDto } from './dto/recycle-transaction-response.dto';
 
 @Controller('users')
 export class UsersController {
@@ -43,5 +45,21 @@ export class UsersController {
     @Body(ValidationPipe) updateBalanceDto: UpdateBalanceDto
   ): Promise<UserResponseDto> {
     return this.usersService.updateBalance(id, updateBalanceDto);
+  }
+
+  @Post(':id/recycle-transactions')
+  @HttpCode(HttpStatus.CREATED)
+  async createRecycleTransaction(
+    @Param('id') userId: string,
+    @Body(ValidationPipe) createRecycleTransactionDto: CreateRecycleTransactionDto
+  ): Promise<RecycleTransactionResponseDto> {
+    return this.usersService.createRecycleTransaction(userId, createRecycleTransactionDto);
+  }
+
+  @Get(':id/recycle-transactions')
+  async getUserRecycleTransactions(
+    @Param('id') userId: string
+  ): Promise<RecycleTransactionResponseDto[]> {
+    return this.usersService.getUserRecycleTransactions(userId);
   }
 }
