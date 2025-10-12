@@ -1,0 +1,8 @@
+# Ignore virtual environments, caches, and large model files
+.venv/
+__pycache__/
+*.pt
+*.so
+*.dylib
+outfile.json
+
